@@ -2,12 +2,18 @@ const express = require("express")
 const app = express()
 const port = 3000
 
+const { engine } = require("express-handlebars")
+
 const db = require("./models")
 const Todo = db.Todo
 
+app.engine('.hbs', engine({ extname: '.hbs' }))
+app.set('view engine', '.hbs')
+app.set('views', './views')
+
 //setup rounter
 app.get("/", (req, res) => {
-    res.redirect("/todos")    
+    res.render('index')
 })
 
 
