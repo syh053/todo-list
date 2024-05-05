@@ -17,12 +17,14 @@ app.get("/", (req, res) => {
 })
 
 
-app.get("/todos", (req, res) => {
-    return Todo.findAll()
-        .then( todos => { res.send( {todos} )
-        } )
-    
-})
+app.get("/todos", (req, res) => Todo.findAll( {
+        attributes: ["id", "name"],
+        raw: true
+    } )
+        .then( todos => res.render("todos", {todos} ))
+
+        .catch( err => res.status(422).json(err)) 
+)
 
 
 app.get("/todos/:id", (req, res) => {
