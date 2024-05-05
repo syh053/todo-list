@@ -2,6 +2,8 @@ const express = require("express")
 const app = express()
 const port = 3000
 
+const db = require("./models")
+const Todo = db.Todo
 
 //setup rounter
 app.get("/", (req, res) => {
@@ -10,7 +12,10 @@ app.get("/", (req, res) => {
 
 
 app.get("/todos", (req, res) => {
-    res.send("show all todos")
+    return Todo.findAll()
+        .then( todos => { res.send( {todos} )
+        } )
+    
 })
 
 
