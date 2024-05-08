@@ -2,6 +2,9 @@
 
 <ol>
     {{#each todos as |todo|}}
-    <li>{{todo.name}}</li>
+    <li class="d-flex">
+        <span class="col-sm-1">{{this.name}}</span>
+        <a href="/todos/{{this.id}}" class="ms-4">detail</a>
+    </li>
     {{/each}}
 </ol>

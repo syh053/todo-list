@@ -22,10 +22,12 @@ app.get("/", (req, res) => {
 })
 
 
-app.get("/todos", (req, res) => Todo.findAll( {
+app.get("/todos", (req, res) => 
+    
+    Todo.findAll( {
         attributes: ["id", "name"],
         raw: true
-    } )
+    })
         .then( todos => res.render("todos", {todos} ))
 
         .catch( err => res.status(422).json(err)) 
@@ -39,7 +41,15 @@ app.get("/todos/new", (req, res) => {
 
 app.get("/todos/:id", (req, res) => {
     const id = req.params.id
-    res.send(`get todo : ${id}.`)
+    Todo.findOne({
+        where: {
+            id: id
+        },
+        attributes: [ "id", "name" ],
+        raw: true
+    } )
+        .then( todo => res.render("detail", { todo }) )
+        .catch(err => console.log(err))
 })
 
 
