@@ -1,10 +1,24 @@
-<a href="/todos/new" class="fs-4 m-3">Create</a>
+<a href="/todos/new" class="fs-4 mx-3">Create</a>
 
-<ol>
-    {{#each todos as |todo|}}
+<ol class="mt-3 mx-4 p-0">
+    {{#each todos as |tto|}}
     <li class="d-flex">
-        <span class="col-sm-1">{{this.name}}</span>
-        <a href="/todos/{{this.id}}" class="ms-4">detail</a>
+        <div class="container ms-3 p-0">
+            <div class="row">
+                <div class="col-sm-1 p-0">
+                    <span class="me-3">{{this.id}}</span>
+                </div>
+                <div class="col-sm-2 p-0">
+                    <span class="">{{this.name}}</span>
+                </div>
+                <div class="col-sm-1 p-0">
+                    <a href="/todos/{{tto.id}}">detail</a>
+                </div>
+                <div class="col-sm-1 p-0">
+                    <a href="/todos/{{tto.id}}/edit" class="ms-4">edit</a>
+                </div>
+            </div>
+        </div>
     </li>
     {{/each}}
 </ol>
