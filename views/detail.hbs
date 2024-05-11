@@ -13,11 +13,12 @@
         <div class="col-sm-2">
             <span class="col-sm-1">{{todo.name}}</span>
         </div>
-        <div class="col-sm-1 p-0">
-            <a href="/todos/{{todo.id}}/edit" class="me-4">edit</a>
-        </div>
-        <div class="col-sm-1 p-0">
-            <a href="/todos">back</a>
+        <div class="col-sm-3 p-0">
+            <a href="/todos/{{todo.id}}/edit" class="me-3">edit</a>
+            <a href="/todos" class="me-3">back</a>
+            <form action="/todos/{{todo.id}}?_method=DELETE" method="post" style="display: inline;">
+                <button type="submit" class="btn btn-danger border-0 p-1">delete</button>
+            </form>
         </div>
     </div>
 </div>

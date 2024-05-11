@@ -2,20 +2,22 @@
 
 <ol class="mt-3 mx-4 p-0">
     {{#each todos as |tto|}}
-    <li class="d-flex">
+    <li class="d-flex align-items-center">
         <div class="container ms-3 p-0">
-            <div class="row">
+            <div class="row mb-3">
                 <div class="col-sm-1 p-0">
                     <span class="me-3">{{this.id}}</span>
                 </div>
                 <div class="col-sm-2 p-0">
                     <span class="">{{this.name}}</span>
                 </div>
-                <div class="col-sm-1 p-0">
-                    <a href="/todos/{{tto.id}}">detail</a>
-                </div>
-                <div class="col-sm-1 p-0">
-                    <a href="/todos/{{tto.id}}/edit" class="ms-4">edit</a>
+                <div class="col-sm-3 p-0">
+                    <a href="/todos/{{tto.id}}" class="me-3">detail</a>
+                    <a href="/todos/{{tto.id}}/edit" class="me-3">edit</a>
+                    <form action="/todos/{{tto.id}}?_method=DELETE" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-danger border-0 p-1">delete</button>
+                    </form>
+                    
                 </div>
             </div>
         </div>

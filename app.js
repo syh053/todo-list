@@ -74,6 +74,7 @@ app.get("/todos/:id/edit", (req, res) => {
         raw: true
     })
         .then(todo => res.render("edit", { todo }))
+        .catch(err => console.log(err))
 })
 
 
@@ -87,12 +88,17 @@ app.put("/todos/:id", (req,res) => {
         { where: { id: id } }
     )
         .then( () => res.redirect(`/todos/${id}`) )
+        .catch(err => console.log(err))
 })
 
 
 app.delete("/todos/:id", (req, res) => {
     const id = req.params.id
-    res.send(`delete todo : ${id}`)
+    Todo.destroy({ where: { id: id }
+     })
+        .then( () => res.redirect("/todos"))
+        .catch(err => console.log(err))
+
 })
 
 
