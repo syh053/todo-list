@@ -32,7 +32,7 @@ app.get("/", (req, res) => {
 app.get("/todos", (req, res) => 
     
     Todo.findAll( {
-        attributes: ["id", "name"],
+        // attributes: ["id", "name"],
         raw: true
     })
         .then( todos => res.render("todos", {todos} ))
