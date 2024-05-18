@@ -6,15 +6,23 @@ const port = 3000
 //載入套件
 const { engine } = require("express-handlebars")
 const methodOverride = require('method-override')
+const session = require("express-session")
+const flash = require("connect-flash")
 
 
 //對所有的 request 進行前置處理
 app.use(express.static("public"))
 app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
+app.use(session({
+    secret: "This is Secret",
+    resave: false,
+    saveUninitialized: false
+}))
+app.use(flash())
 
 
-const db = require("./db/models")
+const db = require("./db/models")   
 const { where } = require("sequelize")
 const Todo = db.Todo
 
@@ -35,7 +43,7 @@ app.get("/todos", (req, res) =>
         // attributes: ["id", "name"],
         raw: true
     })
-        .then( todos => res.render("todos", {todos} ))
+        .then(todos => res.render("todos", { todos, message: req.flash("success") } ))
 
         .catch( err => res.status(422).json(err)) 
 )
@@ -53,7 +61,7 @@ app.get("/todos/:id", (req, res) => {
         attributes: [ "id", "name", "isComplete"],
         raw: true
     } )
-        .then( todo => res.render("detail", { todo }) )
+        .then(todo => res.render("detail", { todo, message: req.flash("success")}) )
         .catch(err => console.log(err))
 })
 
@@ -61,7 +69,10 @@ app.get("/todos/:id", (req, res) => {
 app.post("/todos", (req, res) => {
     const name = req.body.name
     Todo.create( {name} )
-        .then( () => res.redirect("/todos") )
+        .then( () => {
+            req.flash("success", "新增成功")
+            res.redirect("/todos")
+        } )
         .catch( err => console.log(err) )
 })
 
@@ -88,7 +99,10 @@ app.put("/todos/:id", (req,res) => {
         },
         { where: { id: id } }
     )
-        .then( () => res.redirect(`/todos/${id}`) )
+        .then( () => {
+            req.flash("success", "編輯成功")
+            res.redirect(`/todos/${id}`)
+        } )
         .catch(err => console.log(err))
 })
 
@@ -97,7 +111,10 @@ app.delete("/todos/:id", (req, res) => {
     const id = req.params.id
     Todo.destroy({ where: { id: id }
      })
-        .then( () => res.redirect("/todos"))
+        .then( () => {
+            req.flash("success", "刪除成功")
+            res.redirect("/todos")
+        } )
         .catch(err => console.log(err))
 
 })

@@ -2,7 +2,7 @@
     <div class="container text-center ms-3 mt-3 ">
         <div class="row">
             <div class="col-sm-1">
-                <input type="checkbox" name="completed" value="isCompleted">
+                <input type="checkbox" name="completed" value="isCompleted" {{#if todo.isComplete}} checked {{/if}}>
             </div>
             <div class="col-sm-2">
                 <input type="text" class="form-control" name="name" value="{{todo.name}}">
