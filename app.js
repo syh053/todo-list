@@ -50,7 +50,7 @@ app.get("/todos/:id", (req, res) => {
         where: {
             id: id
         },
-        attributes: [ "id", "name" ],
+        attributes: [ "id", "name", "isComplete"],
         raw: true
     } )
         .then( todo => res.render("detail", { todo }) )
@@ -70,7 +70,7 @@ app.get("/todos/:id/edit", (req, res) => {
     const id = req.params.id
     Todo.findOne({
         where: {  id: id },
-        attributes: ["id","name"],
+        attributes: ["id", "name", "isComplete"],
         raw: true
     })
         .then(todo => res.render("edit", { todo }))
@@ -81,10 +81,11 @@ app.get("/todos/:id/edit", (req, res) => {
 app.put("/todos/:id", (req,res) => {
     const id = req.params.id
     const name = req.body.name
-    console.log(id)
-    console.log(name)
+    const { completed } = req.body
     Todo.update( 
-        { name: name },
+        { name: name,
+          isComplete: completed === "isCompleted"
+        },
         { where: { id: id } }
     )
         .then( () => res.redirect(`/todos/${id}`) )

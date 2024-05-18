@@ -5,11 +5,12 @@
     <li class="d-flex align-items-center">
         <div class="container ms-3 p-0">
             <div class="row mb-3">
-                <div class="col-sm-1 p-0">
+                <div style="width: 70px;">
                     <span class="me-3">{{this.id}}</span>
                 </div>
                 <div class="col-sm-2 p-0">
-                    <span class="">{{this.name}}</span>
+                    <input type="checkbox" disabled {{#if tto.isComplete}} checked {{/if}}>
+                    <span class="ms-2">{{this.name}}</span>
                 </div>
                 <div class="col-sm-3 p-0">
                     <a href="/todos/{{tto.id}}" class="me-3">detail</a>

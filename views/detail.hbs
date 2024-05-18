@@ -4,16 +4,17 @@
     <a href="/todos">back</a>
 </div> --}}
 
+    
 
 
 
-
-<div class="container text-center ms-0 mt-3 p-0">
+<div class="container ms-3 mt-3 p-0">
     <div class="row">
         <div class="col-sm-2">
-            <span class="col-sm-1">{{todo.name}}</span>
+            <input type="checkbox" disabled {{#if todo.isComplete}} checked {{/if}}>
+            <span class="col-sm-1 ms-3">{{todo.name}}</span>
         </div>
-        <div class="col-sm-3 p-0">
+        <div class="col-sm-3 p-0 mx-0">
             <a href="/todos/{{todo.id}}/edit" class="me-3">edit</a>
             <a href="/todos" class="me-3">back</a>
             <form action="/todos/{{todo.id}}?_method=DELETE" method="post" style="display: inline;">
