@@ -14,11 +14,11 @@ app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 
 
-const db = require("./models")
+const db = require("./db/models")
 const { where } = require("sequelize")
 const Todo = db.Todo
 
-app.engine('.hbs', engine({ extname: '.hbs' }))
+app.engine('.hbs', engine({ extname: '.hbs' })) 
 app.set('view engine', '.hbs')
 app.set('views', './views')
 
