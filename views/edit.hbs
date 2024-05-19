@@ -1,3 +1,8 @@
+{{#if error}}
+<div class="fs-3 m-3">{{error}}</div>
+{{/if}}
+
+
 <form action="/todos/{{todo.id}}?_method=PUT" method="POST">
     <div class="container text-center ms-3 mt-3 ">
         <div class="row">
