@@ -49,7 +49,9 @@ app.get("/todos", (req, res) =>
 )
 
 
-app.get("/todos/new", (req, res) => res.render("new"))
+app.get("/todos/new", (req, res) => {
+    res.render("new", { message: req.flash("error") } )
+})
 
 
 app.get("/todos/:id", (req, res) => {
@@ -68,12 +70,22 @@ app.get("/todos/:id", (req, res) => {
 
 app.post("/todos", (req, res) => {
     const name = req.body.name
-    Todo.create( {name} )
-        .then( () => {
-            req.flash("success", "新增成功")
-            res.redirect("/todos")
-        } )
-        .catch( err => console.log(err) )
+    try { 
+        Todo.create({ name })
+            .then(() => {
+                req.flash("success", "新增成功")
+                res.redirect("/todos")
+            })
+            .catch( err => {
+                err => console.log(err)
+                req.flash("error", "新增失敗，字數過長")
+                res.redirect("back")
+            } ) 
+    } catch (error) { 
+        err => console.log(err)
+        req.flash("error", "新增失敗，字數過長")
+        res.redirect("back")
+    }
 })
 
 
