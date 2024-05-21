@@ -1,6 +1,4 @@
-{{#if error}}
-<div class="fs-3 m-3">{{error}}</div>
-{{/if}}
+{{> message}}
 
 
 <form action="/todos/{{todo.id}}?_method=PUT" method="POST">

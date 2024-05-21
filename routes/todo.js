@@ -7,137 +7,122 @@ const Todo = db.Todo
 
 
 
-router.get("/", (req, res) => {
+router.get("/", (req, res, next) => {
 
-    try {
-        Todo.findAll({
-            raw: true
+    Todo.findAll({
+        raw: true
+    })
+        .then(todos => res.render("todos", { todos }))
+        .catch( err => {
+            err.errorMessage = "無法取得 todos 清單"
+            next( err )
         })
-            .then(todos => res.render("todos", { todos, message: req.flash("success"), error: req.flash("error") }))
-            .catch(err => {
-                console.log(err)
-                req.flash("error", "無法取得 todos 清單")
-                res.redirect("back")
-            })
-    } catch (error) {
-        console.log(error)
-        req.flash("error", "伺服器錯誤")
-        res.redirect("back")
-    }
+    
 })
 
 
 router.get("/new", (req, res) => {
 
-    try {
-        res.render("new", { message: req.flash("error") })
-    } catch (error) {
-        console.log(error)
-        req.flash("error", "伺服器錯誤")
-        res.redirect("back")
-    }
+    res.render("new", { message: req.flash("error") })
+
 })
 
 
-router.get("/:id", (req, res) => {
-    try {
-        const id = req.params.id
-        Todo.findOne({
-            where: {
-                id: id
-            },
-            attributes: ["id", "name", "isComplete"],
-            raw: true
+router.get("/:id", (req, res, next) => {
+
+    const id = req.params.id
+    Todo.findOne({
+        where: {
+            id: id
+        },
+        attributes: ["id", "name", "isComplete"],
+        raw: true
+    })
+        .then( todo => {
+            if (!todo ) {
+                const error = new Error('找不到這個 id !!!')
+                error.errorMessage = error.message
+                next(error)
+            } else {
+                res.render("detail", { todo })
+            }
+            
         })
-            .then(todo => res.render("detail", { todo, message: req.flash("success") }))
-            .catch(err => {
-                console.log(err)
-                req.flash("error", "無法取得這筆資料")
-                res.redirect("back")
-            })
-    } catch (error) {
-        console.log(err)
-        req.flash("error", "伺服器錯誤")
-        res.redirect("back")
-    }
+        .catch( err => {
+            err.errorMessage = err.message
+            next(err)
+        })
+
 })
 
 
-router.post("/", (req, res) => {
+router.post("/", (req, res, next) => {
+
     const name = req.body.name
-    try {
-        Todo.create({ name })
-            .then(() => {
-                req.flash("success", "新增成功")
-                res.redirect("/todos")
-            })
-            .catch(err => {
-                console.log(err)
-                req.flash("error", "新增失敗，字數過長")
-                res.redirect("back")
-            })
-    } catch (error) {
-        err => console.log(err)
-        req.flash("error", "伺服器錯誤")
-        res.redirect("back")
-    }
-})
 
-
-router.get("/:id/edit", (req, res) => {
-    try {
-        const id = req.params.id
-        Todo.findOne({
-            where: { id: id },
-            attributes: ["id", "name", "isComplete"],
-            raw: true
+    Todo.create({ name })
+        .then(() => {
+            req.flash("success", "新增成功")
+            res.redirect("/todos")
         })
-            .then(todo => res.render("edit", { todo, error: req.flash("error") }))
-            .catch(err => {
-                console.log(err)
-                req.flash("error", "資料取得失敗")
-                res.redirect("back")
-            })
-    } catch (error) {
-        console.log(err)
-        req.flash("error", "伺服器錯誤")
-        res.redirect("back")
-
-    }
+        .catch( err => {
+            err.errorMessage = "新增失敗，字數過長"
+            next(err)
+        })
+    
 })
 
 
-router.put("/:id", (req, res) => {
-    try {
-        const id = req.params.id
-        const name = req.body.name
-        const { completed } = req.body
-        Todo.update(
-            {
-                name: name,
-                isComplete: completed === "isCompleted"
-            },
-            { where: { id: id } }
-        )
-            .then(() => {
-                req.flash("success", "編輯成功")
-                res.redirect(`/todos/${id}`)
-            })
-            .catch(err => {
-                console.log(err)
-                req.flash("error", "編輯失敗")
-                res.redirect("back")
-            })
-    } catch (error) {
-        console.log(err)
-        req.flash("error", "伺服器錯誤")
-        res.redirect("back")
-    }
+router.get("/:id/edit", (req, res, next) => {
+
+    const id = req.params.id
+    Todo.findOne({
+        where: { id: id },
+        attributes: ["id", "name", "isComplete"],
+        raw: true
+    })
+        .then( todo => {
+            if ( !todo ) {
+                const error = new Error('找不到這個 id 編輯!!!')
+                error.errorMessage = error.message
+                next(error)
+            } else {
+                res.render("edit", { todo })
+            }
+        } )
+        .catch( err => {
+            err.errorMessage = '找不到這個 id 編輯!!!'
+            next(err)
+        })
+    
 })
 
 
-router.delete("/:id", (req, res) => {
-    try {
+router.put("/:id", (req, res, next) => {
+    
+    const id = req.params.id
+    const name = req.body.name
+    const { completed } = req.body
+    Todo.update(
+        {
+            name: name,
+            isComplete: completed === "isCompleted"
+        },
+        { where: { id: id } }
+    )
+        .then( () => {
+            req.flash("success", "編輯成功")
+            res.redirect(`/todos/${id}`)
+        })
+        .catch( err => {
+            err.errorMessage = err.message
+            next(err)
+        })
+})
+
+
+router.delete("/:id", (req, res, next) => {
+    
         const id = req.params.id
         Todo.destroy({
             where: { id: id }
@@ -146,16 +131,10 @@ router.delete("/:id", (req, res) => {
                 req.flash("success", "刪除成功")
                 res.redirect("/todos")
             })
-            .catch(err => {
-                console.log(err)
-                req.flash("error", "刪除失敗")
-                res.redirect("back")
+            .catch( err => {
+                err.errorMessage = err.message
+                next(err)
             })
-    } catch (error) {
-        console.log(err)
-        req.flash("error", "伺服器錯誤")
-        res.redirect("back")
-    }
 })
 
 
