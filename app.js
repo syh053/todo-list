@@ -14,6 +14,13 @@ const message = require("./middlewares/message-handler")
 const  error  = require("./middlewares/error_handler")
 
 
+if ( process.env.NODE_ENV === "development" ){
+    require("dotenv").config()
+}
+
+console.log("SESSION_SECRET :", process.env.SESSION_SECRET)
+
+
 app.engine('.hbs', engine({ extname: '.hbs' }))
 app.set('view engine', '.hbs')
 app.set('views', './views')
@@ -26,7 +33,7 @@ app.use(methodOverride('_method'))
 
 
 app.use(session({
-    secret: "This is Secret",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false
 }))
