@@ -27,4 +27,29 @@
         </div>
     </li>
     {{/each}}
+
+
+    <nav aria-label="Page navigation example" class="mt-3 mx-5 p-0">
+        <ul class="pagination">
+            
+            <li class="page-item">
+                <form action="/todos" method="get">
+                    <input type="hidden" name="page" value="{{Previous}}">
+                    <button class="page-link" type="submit">Previous</button>
+                </form>
+            </li>
+
+
+            <li class="page-item page-link">{{ currentPage }} / {{ lastPage }}</li>
+
+            <li class="page-item">
+                <form action="/todos" method="get">
+                    <input type="hidden" name="page" value="{{next}}">
+                    <button class="page-link" type="submit">next</button>
+                </form>
+            </li>
+            
+        </ul>
+    </nav>
+
 </ol>

@@ -9,15 +9,26 @@ const Todo = db.Todo
 
 router.get("/", (req, res, next) => {
 
+    const page = parseInt(req.query.page) || 1
+    const limit = 10
+
     Todo.findAll({
         raw: true
     })
-        .then(todos => res.render("todos", { todos }))
-        .catch( err => {
+        .then(todos => res.render("todos", {
+
+            currentPage: page,
+            next: page + 1 < Math.ceil(todos.length / 10) ? page + 1 : page,
+            Previous: page - 1 > 1 ? page - 1 : page,
+            lastPage: Math.ceil(todos.length / 10),
+            todos: todos.slice((page - 1) * limit, page * limit),
+
+        }))
+        .catch(err => {
             err.errorMessage = "無法取得 todos 清單"
-            next( err )
+            next(err)
         })
-    
+
 })
 
 
@@ -38,17 +49,17 @@ router.get("/:id", (req, res, next) => {
         attributes: ["id", "name", "isComplete"],
         raw: true
     })
-        .then( todo => {
-            if (!todo ) {
+        .then(todo => {
+            if (!todo) {
                 const error = new Error('找不到這個 id !!!')
                 error.errorMessage = error.message
                 next(error)
             } else {
                 res.render("detail", { todo })
             }
-            
+
         })
-        .catch( err => {
+        .catch(err => {
             err.errorMessage = err.message
             next(err)
         })
@@ -65,11 +76,11 @@ router.post("/", (req, res, next) => {
             req.flash("success", "新增成功")
             res.redirect("/todos")
         })
-        .catch( err => {
+        .catch(err => {
             err.errorMessage = "新增失敗，字數過長"
             next(err)
         })
-    
+
 })
 
 
@@ -81,25 +92,25 @@ router.get("/:id/edit", (req, res, next) => {
         attributes: ["id", "name", "isComplete"],
         raw: true
     })
-        .then( todo => {
-            if ( !todo ) {
+        .then(todo => {
+            if (!todo) {
                 const error = new Error('找不到這個 id 編輯!!!')
                 error.errorMessage = error.message
                 next(error)
             } else {
                 res.render("edit", { todo })
             }
-        } )
-        .catch( err => {
+        })
+        .catch(err => {
             err.errorMessage = '找不到這個 id 編輯!!!'
             next(err)
         })
-    
+
 })
 
 
 router.put("/:id", (req, res, next) => {
-    
+
     const id = req.params.id
     const name = req.body.name
     const { completed } = req.body
@@ -110,11 +121,11 @@ router.put("/:id", (req, res, next) => {
         },
         { where: { id: id } }
     )
-        .then( () => {
+        .then(() => {
             req.flash("success", "編輯成功")
             res.redirect(`/todos/${id}`)
         })
-        .catch( err => {
+        .catch(err => {
             err.errorMessage = err.message
             next(err)
         })
@@ -122,19 +133,19 @@ router.put("/:id", (req, res, next) => {
 
 
 router.delete("/:id", (req, res, next) => {
-    
-        const id = req.params.id
-        Todo.destroy({
-            where: { id: id }
+
+    const id = req.params.id
+    Todo.destroy({
+        where: { id: id }
+    })
+        .then(() => {
+            req.flash("success", "刪除成功")
+            res.redirect("/todos")
         })
-            .then(() => {
-                req.flash("success", "刪除成功")
-                res.redirect("/todos")
-            })
-            .catch( err => {
-                err.errorMessage = err.message
-                next(err)
-            })
+        .catch(err => {
+            err.errorMessage = err.message
+            next(err)
+        })
 })
 
 
