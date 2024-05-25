@@ -7,6 +7,8 @@ const error = (err, req, res, next) => {
 
     if ( errorRecord.includes("找不到") ) {
         res.redirect("/todos")
+    } else if (errorRecord.includes("超過")) {
+        res.redirect("/todos")
     } else {
         res.redirect("back")
     }

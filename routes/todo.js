@@ -15,15 +15,24 @@ router.get("/", (req, res, next) => {
     Todo.findAll({
         raw: true
     })
-        .then(todos => res.render("todos", {
+        .then(todos => {
 
-            currentPage: page,
-            next: page + 1 < Math.ceil(todos.length / 10) ? page + 1 : page,
-            Previous: page - 1 > 1 ? page - 1 : page,
-            lastPage: Math.ceil(todos.length / 10),
-            todos: todos.slice((page - 1) * limit, page * limit),
+            const lastPage = Math.ceil(todos.length / 10)
 
-        }))
+            if ( page > lastPage ) {
+                const error = new Error('超過總分頁啦')
+                error.errorMessage = error.message
+                next(error)
+            } else {
+                return res.render("todos", {
+                    currentPage: page,
+                    next: page + 1 <= lastPage ? page + 1 : page,
+                    Previous: page - 1 >= 1 ? page - 1 : page,
+                    lastPage: lastPage,
+                    todos: todos.slice((page - 1) * limit, page * limit),
+                })
+            }
+        })
         .catch(err => {
             err.errorMessage = "無法取得 todos 清單"
             next(err)
