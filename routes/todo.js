@@ -12,14 +12,17 @@ router.get("/", (req, res, next) => {
     const page = parseInt(req.query.page) || 1
     const limit = 10
 
-    Todo.findAll({
+    Todo.findAndCountAll({
+        offset: ( page - 1 ) * limit,
+        limit: limit,
         raw: true
     })
-        .then(todos => {
+        .then( todos => {
 
-            const lastPage = Math.ceil(todos.length / 10)
-
-            if ( page > lastPage ) {
+            const { count, rows } = todos
+            const lastPage = count / limit
+            
+            if (page > lastPage ) {
                 const error = new Error('超過總分頁啦')
                 error.errorMessage = error.message
                 next(error)
@@ -29,7 +32,7 @@ router.get("/", (req, res, next) => {
                     next: page + 1 <= lastPage ? page + 1 : page,
                     Previous: page - 1 >= 1 ? page - 1 : page,
                     lastPage: lastPage,
-                    todos: todos.slice((page - 1) * limit, page * limit),
+                    todos: rows
                 })
             }
         })
