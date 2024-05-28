@@ -3,7 +3,7 @@ module.exports = {
   "development": {
     "username": "root",
     "password": "password",
-    "database": "todo_performance_test",
+    "database": "todo",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
