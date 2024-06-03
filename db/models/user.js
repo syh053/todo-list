@@ -16,13 +16,13 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       allowNull: false,
-      unique: true
+      unique: true,
+      primaryKey: true
     },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
-      primaryKey: true
+      unique: true, 
     },
     password: {
       type: DataTypes.STRING,
@@ -41,7 +41,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: 'User'
+    modelName: 'User',
+    tableName: 'Users'
   })
   return User
 }

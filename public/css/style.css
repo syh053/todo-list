@@ -1,5 +1,17 @@
+* {
+    box-sizing: border-box;
+}
+
+
+.container-all {
+    position: relative;
+    right: 10vw;
+    min-width: 20vw;
+    max-width: 60vw;
+}
+
+
 .page {
-    padding: 5px;
-    text-align: center;
+    padding: 5px; 
     width: 3em;
 };
