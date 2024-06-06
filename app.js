@@ -11,6 +11,8 @@ const session = require('express-session')
 const flash = require('connect-flash')
 const message = require('./middlewares/message-handler')
 const error = require('./middlewares/error_handler')
+const passport = require('passport')
+
 
 if (process.env.NODE_ENV === 'development') {
   require('dotenv').config()
@@ -32,9 +34,15 @@ app.use(session({
   resave: false,
   saveUninitialized: false
 }))
+
 app.use(flash())
+
+app.use(passport.initialize())
+
 app.use(message)
+
 app.use(rounter)
+
 app.use(error)
 
 // express.listening

@@ -6,11 +6,36 @@ const { where } = require('sequelize')
 const { raw } = require('mysql2')
 const User = db.User
 
+const passport = require('passport')
+const LocalStrategy = require('passport-local')
+
+passport.use(new LocalStrategy({ usernameField: 'email' }, (username, password, done) => {
+  User.findOne({
+
+    where: { email: username },
+    raw: true
+  })
+
+    .then( user => {
+      if (!user || user.password !== password) {
+        return done(null, false, {type: 'error', message: 'email 或密碼錯誤!'})
+      }
+      return done(null, user)
+    })
+    .catch( err => done(err))
+}))
+
+passport.serializeUser( (user, done) => {
+  const { id, email, name } = user
+  return done(null, { id, email, email })
+} )
+
 router.get('/register', (req, res, next) => {
   return res.render("register")
 })
 
 router.get('/login', (req, res, next) => {
+  console.log('session :', req.session)
   return res.render("login")
 })
 
@@ -39,7 +64,7 @@ router.post('/users', (req, res, next) => {
       if (user) {
         req.flash('error', '輸入的 email 已註冊')
         return res.redirect('back')
-      } 
+      }
 
       return User.create({
         name: name,
@@ -49,21 +74,22 @@ router.post('/users', (req, res, next) => {
 
     })
 
-    .then( create => {
+    .then(create => {
       req.flash('success', '註冊成功')
       res.redirect('login')
-    } )
+    })
 
-    .catch( err => {
+    .catch(err => {
       err.errorMessage = "註冊失敗"
       next(err)
-    } )
+    })
 })
 
-
-router.post('/login', (req, res, next) => {
-  res.send('This is Login Page')
-})
+router.post('/login', passport.authenticate('local', {
+  successRedirect:'/todos',
+  failureRedirect: '/login',
+  failureFlash: true
+}))
 
 router.post('/logout', (req, res, next) => {
   res.send('This is Logout Page')

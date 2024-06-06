@@ -1,6 +1,6 @@
 const error = (err, req, res, next) => {
   console.log(err)
-  const errorRecord = err.errorMessage
+  const errorRecord = err.errorMessage || '處理失敗'
 
   req.flash('error', err.errorMessage || '處理失敗')
 

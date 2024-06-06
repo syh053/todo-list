@@ -6,6 +6,7 @@ const db = require('../db/models')
 const Todo = db.Todo
 
 router.get('/', (req, res, next) => {
+  console.log('session :', req.session)
   const page = parseInt(req.query.page) || 1
   const limit = 10
 
