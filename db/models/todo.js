@@ -9,7 +9,9 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate (models) {
-      // define association here
+      Todo.belongsTo(models.User, {
+        foreignKey: "userID"
+      })
     }
   }
   Todo.init({
@@ -24,6 +26,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false
+    },
+    userID: {
+      type: DataTypes.INTEGER,
+      allowNull: false
     }
   }, {
     sequelize,
