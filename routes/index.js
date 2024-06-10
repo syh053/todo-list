@@ -6,7 +6,9 @@ const todos = require('./todo')
 
 const login = require('./login')
 
-router.use('/todos', todos)
+const authHandler = require('../middlewares/auth-handler')
+
+router.use('/todos', authHandler, todos)
 
 router.use(login)
 

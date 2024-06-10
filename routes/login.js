@@ -11,7 +11,6 @@ const LocalStrategy = require('passport-local')
 
 passport.use(new LocalStrategy({ usernameField: 'email' }, (username, password, done) => {
   User.findOne({
-
     where: { email: username },
     raw: true
   })
@@ -30,12 +29,15 @@ passport.serializeUser( (user, done) => {
   return done(null, { id, email, email })
 } )
 
+passport.deserializeUser( (user, done) =>{
+  return done(null, { id: user.id })
+} )
+
 router.get('/register', (req, res, next) => {
   return res.render("register")
 })
 
 router.get('/login', (req, res, next) => {
-  console.log('session :', req.session)
   return res.render("login")
 })
 
@@ -92,7 +94,11 @@ router.post('/login', passport.authenticate('local', {
 }))
 
 router.post('/logout', (req, res, next) => {
-  res.send('This is Logout Page')
+  req.logout( error => {
+    if (error) { next(error) }
+
+    return res.redirect('login')
+  } )
 })
 
 module.exports = router
