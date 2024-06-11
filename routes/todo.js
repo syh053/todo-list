@@ -20,7 +20,7 @@ router.get('/', (req, res, next) => {
   })
     .then(todos => {
       const { count, rows } = todos
-      const lastPage = Math.ceil(count / limit)
+      const lastPage = Math.ceil(count / limit) || 1
 
       if (page > lastPage) {
         const error = new Error('超過總分頁啦')

@@ -2,9 +2,9 @@ const express = require('express')
 const router = express.Router()
 
 const db = require('../db/models')
-const { where } = require('sequelize')
-const { raw } = require('mysql2')
 const User = db.User
+
+const bcryst = require('bcryptjs')
 
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
@@ -16,10 +16,18 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, (username, password, 
   })
 
     .then( user => {
-      if (!user || user.password !== password) {
+      if (!user) {
         return done(null, false, {type: 'error', message: 'email 或密碼錯誤!'})
       }
-      return done(null, user)
+
+      return bcryst.compare( password, user.password)
+        .then( result => {
+          if (!result) {
+            return done(null, false, { type: 'error', message: 'email 或密碼錯誤!' })
+          } else {
+            return done(null, user)
+          }
+        })   
     })
     .catch( err => done(err))
 }))
@@ -68,12 +76,14 @@ router.post('/users', (req, res, next) => {
         return res.redirect('back')
       }
 
-      return User.create({
-        name: name,
-        email: email,
-        password: password
-      })
-
+      return bcryst.hash(password, 10)
+        .then( hash => {
+          User.create({
+            name: name,
+            email: email,
+            password: hash
+          })
+        })
     })
 
     .then(create => {
