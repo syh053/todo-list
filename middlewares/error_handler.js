@@ -4,7 +4,7 @@ const error = (err, req, res, next) => {
 
   req.flash('error', err.errorMessage || '處理失敗')
 
-  if (errorRecord.includes('找不到')) {
+  if (errorRecord.includes('找不到') || errorRecord === '無此權限 !!!') {
     res.redirect('/todos')
   } else if (errorRecord.includes('超過')) {
     res.redirect('/todos')

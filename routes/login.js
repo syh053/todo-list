@@ -30,7 +30,7 @@ passport.serializeUser( (user, done) => {
 } )
 
 passport.deserializeUser( (user, done) =>{
-  return done(null, { id: user.id })
+  return done(null, { userID: user.id })
 } )
 
 router.get('/register', (req, res, next) => {

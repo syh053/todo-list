@@ -14,4 +14,15 @@
 .page {
     padding: 5px; 
     width: 3em;
-};
+}
+
+.logout-place {
+    position: relative;
+    left: 16vw;
+}
+
+.logout-edit-place {
+    position: relative;
+    left: 23.5vw;
+}
+
