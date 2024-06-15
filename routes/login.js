@@ -4,53 +4,19 @@ const router = express.Router()
 const db = require('../db/models')
 const User = db.User
 
-const bcryst = require('bcryptjs')
+const bcrypt = require('bcryptjs')
 
-const passport = require('passport')
-const LocalStrategy = require('passport-local')
-
-passport.use(new LocalStrategy({ usernameField: 'email' }, (username, password, done) => {
-  User.findOne({
-    where: { email: username },
-    raw: true
-  })
-
-    .then( user => {
-      if (!user) {
-        return done(null, false, {type: 'error', message: 'email 或密碼錯誤!'})
-      }
-
-      return bcryst.compare( password, user.password)
-        .then( result => {
-          if (!result) {
-            return done(null, false, { type: 'error', message: 'email 或密碼錯誤!' })
-          } else {
-            return done(null, user)
-          }
-        })   
-    })
-    .catch( err => done(err))
-}))
-
-passport.serializeUser( (user, done) => {
-  const { id, email, name } = user
-  return done(null, { id, email, email })
-} )
-
-passport.deserializeUser( (user, done) =>{
-  return done(null, { userID: user.id })
-} )
+const passport = require('../config/passport')
 
 router.get('/register', (req, res, next) => {
-  return res.render("register")
+  return res.render('register')
 })
 
 router.get('/login', (req, res, next) => {
-  return res.render("login")
+  return res.render('login')
 })
 
 router.post('/users', (req, res, next) => {
-
   const { name, email, password, confirmPassword } = req.body
 
   if (!email) {
@@ -65,22 +31,21 @@ router.post('/users', (req, res, next) => {
   }
 
   User.findOne({
-    where: { email: email },
+    where: { email },
     raw: true
   })
 
     .then(user => {
-
       if (user) {
         req.flash('error', '輸入的 email 已註冊')
         return res.redirect('back')
       }
 
-      return bcryst.hash(password, 10)
-        .then( hash => {
+      return bcrypt.hash(password, 10)
+        .then(hash => {
           User.create({
-            name: name,
-            email: email,
+            name,
+            email,
             password: hash
           })
         })
@@ -92,23 +57,31 @@ router.post('/users', (req, res, next) => {
     })
 
     .catch(err => {
-      err.errorMessage = "註冊失敗"
+      err.errorMessage = '註冊失敗'
       next(err)
     })
 })
 
 router.post('/login', passport.authenticate('local', {
-  successRedirect:'/todos',
+  successRedirect: '/todos',
   failureRedirect: '/login',
   failureFlash: true
 }))
 
 router.post('/logout', (req, res, next) => {
-  req.logout( error => {
+  req.logout(error => {
     if (error) { next(error) }
 
     return res.redirect('login')
-  } )
+  })
 })
+
+router.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }))
+
+router.get('/oauth2/redirect/facebook', passport.authenticate('facebook', {
+  successRedirect: '/todos',
+  failureRedirect: '/login',
+  failureFlash: true
+}))
 
 module.exports = router

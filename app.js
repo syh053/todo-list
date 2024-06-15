@@ -1,7 +1,6 @@
 // 建立 server
 const express = require('express')
 const app = express()
-const rounter = require('./routes')
 const port = 3000
 
 // 載入套件
@@ -13,10 +12,12 @@ const message = require('./middlewares/message-handler')
 const error = require('./middlewares/error_handler')
 const passport = require('passport')
 
-
 if (process.env.NODE_ENV === 'development') {
   require('dotenv').config()
 }
+
+// 載入路由
+const rounter = require('./routes')
 
 console.log('SESSION_SECRET :', process.env.SESSION_SECRET)
 

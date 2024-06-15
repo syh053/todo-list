@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate (models) {
       Todo.belongsTo(models.User, {
-        foreignKey: "userID"
+        foreignKey: 'userID'
       })
     }
   }

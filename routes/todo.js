@@ -6,7 +6,7 @@ const db = require('../db/models')
 const Todo = db.Todo
 
 router.get('/', (req, res, next) => {
-  console.log( req.user )
+  console.log(req.user)
 
   const userID = req.user.userID
   const page = parseInt(req.query.page) || 1
@@ -57,12 +57,12 @@ router.get('/:id', (req, res, next) => {
     attributes: ['id', 'name', 'isComplete', 'userID'],
     raw: true
   })
-    .then( todo => {
+    .then(todo => {
       if (!todo) {
         const error = new Error('找不到這個 id !!!')
         error.errorMessage = error.message
         next(error)
-      } else if ( todo.userID !== userID ) {
+      } else if (todo.userID !== userID) {
         const error = new Error('無此權限 !!!')
         error.errorMessage = error.message
         next(error)
@@ -101,7 +101,7 @@ router.get('/:id/edit', (req, res, next) => {
     attributes: ['id', 'name', 'isComplete', 'userID'],
     raw: true
   })
-    .then( todo => {
+    .then(todo => {
       if (!todo) {
         const error = new Error('找不到這個 id 編輯!!!')
         error.errorMessage = error.message
@@ -128,9 +128,9 @@ router.put('/:id', (req, res, next) => {
 
   Todo.findOne({
     where: { id },
-    attributes: ['id', 'name', 'isComplete', 'userID'],
+    attributes: ['id', 'name', 'isComplete', 'userID']
   })
-    .then( todo => {
+    .then(todo => {
       if (!todo) {
         const error = new Error('找不到這個 id 編輯!!!')
         error.errorMessage = error.message
@@ -157,8 +157,7 @@ router.put('/:id', (req, res, next) => {
       err.errorMessage = err.message
       next(err)
     })
-}) 
-
+})
 
 router.delete('/:id', (req, res, next) => {
   const id = req.params.id
@@ -166,9 +165,9 @@ router.delete('/:id', (req, res, next) => {
 
   Todo.findOne({
     where: { id },
-    attributes: ['id', 'name', 'isComplete', 'userID'],
+    attributes: ['id', 'name', 'isComplete', 'userID']
   })
-    .then( todo => {
+    .then(todo => {
       if (!todo) {
         const error = new Error('找不到這個 id 編輯!!!')
         error.errorMessage = error.message
